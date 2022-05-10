@@ -1,44 +1,77 @@
 import { Client, Intents } from 'discord.js'
 import { token } from './config.json'
+import { readFileSync, writeFile } from 'fs'
 const client = new Client({
     intents: ['GUILDS', 'GUILD_MESSAGES', 'DIRECT_MESSAGES'],
     partials: ['CHANNEL'],
 })
-client.once('ready', () => {
-    console.log('Ready!')
-})
 function getSimpleEquation() {
-    let out: string = ''
     let a = Math.floor(Math.random() * 10)
     let b = Math.floor(Math.random() * 10)
     let answer = a + b
-    out += a
-    out += ' + '
-    out += b
-    return [out, answer]
+    return [a + ' + ' + b, answer]
 }
+
 class User {
     constructor(public id: number) {}
     is_solving: boolean = false
-    problems: string[]
+    problems: string[] = []
+    username: string
     current_answer: number = 0
 }
-let UserBase = new Map<string, User>()
+let UserBase = {}
+//let data = readFileSync('./graph.json')
+// try {
+//     UserBase = JSON.parse(data)
+// }
+// UserBase = JSON.parse(readFileSync('./graph.json'))
+// function exitHandler(callback) {
+//     writeFile('graph.json', JSON.stringify(UserBase), (err) => {
+//         if (err) {
+//             console.log(
+//                 'There has been an error saving your configuration data.',
+//             )
+//             console.log(err.message)
+//             return
+//         }
+//         console.log('Configuration saved successfully.')
+//     })
+// }
+client.once('ready', () => {
+    console.log('Ready!')
+    UserBase['gsdfg'] = new User(0)
+    UserBase['gsdfg'].problems.push('dfsaf')
+})
 client.on('messageCreate', async (message) => {
     if (message.author.bot || message.channelId != '966167143567745054') return
     console.log(message.content)
     console.log(message.author.id)
-    if (UserBase[message.author.id] == undefined)
+    if (UserBase[message.author.id] === undefined) {
         UserBase[message.author.id] = new User(+message.author.id)
+        UserBase[message.author.id].username = message.author.username
+    }
     switch (message.content) {
         case '/getfullrating':
+            let sortable = []
+            for (let c in UserBase) {
+                sortable.push([
+                    UserBase[c].username,
+                    UserBase[c].problems.length,
+                ])
+            }
+            sortable.sort((a, b) => b[1] - a[1])
+            let out = 'RATING\n'
+            sortable.forEach((a, ind) => {
+                out += ind + 1 + '.' + a[0] + ' - ' + a[1] + '\n'
+            })
+            if (out.length != 0) message.author.send(out)
             break
         case '/get problem':
             UserBase[message.author.id].is_solving = true
             let k = getSimpleEquation()
             message.author.send(k[0].toString())
             UserBase[message.author.id].current_answer = k[1]
-
+            UserBase[message.author.id].problems.push(k[0].toString())
             break //message.author.send({ files: ['./test.png'] })
         case '/show problem types':
             message.author.send(
@@ -46,9 +79,9 @@ client.on('messageCreate', async (message) => {
             )
             break
         default:
-            if (UserBase[message.author.id].is_solving == true) {
+            if (UserBase[message.author.id].is_solving === true) {
                 if (
-                    message.content !=
+                    message.content !==
                     UserBase[message.author.id].current_answer.toString()
                 )
                     message.react('👎')
@@ -61,5 +94,4 @@ client.on('messageCreate', async (message) => {
             break
     }
 })
-
 client.login(token)
