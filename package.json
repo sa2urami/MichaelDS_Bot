@@ -5,6 +5,7 @@
         "discord-api-types": "^0.31.2",
         "discord.js": "^13.6.0",
         "mathjax": "^3.2.0",
+        "mathjax-node": "^2.1.1",
         "mathjax-node-cli": "^1.0.1",
         "sharp": "^0.30.4",
         "tex-to-svg": "^0.2.0"
