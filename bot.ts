@@ -1,63 +1,134 @@
 import { Client, Intents } from 'discord.js'
 import { token, ProblemsLine } from './config.json'
 import { readFileSync, writeFileSync, writeFile } from 'fs'
+import fs from 'graceful-fs'
 import mjAPI from 'mathjax-node'
 import sharp from 'sharp'
+import exitHook from 'exit-hook'
 mjAPI.config({
-    MathJax: {},
+    displayMessages: false,
+    displayErrors: false,
+    MathJax: {
+        displayAlign: 'left',
+    },
 })
 mjAPI.start()
 const client = new Client({
     intents: ['GUILDS', 'GUILD_MESSAGES', 'DIRECT_MESSAGES'],
     partials: ['CHANNEL'],
 })
-function getSimpleEquation() {
-    let a = Math.floor(Math.random() * 10)
-    let b = Math.floor(Math.random() * 10)
-    return [a + ' + ' + b, a + b]
+var gcd = function (aa: number, bb: number) {
+    let a = aa,
+        b = bb
+    if (!b) {
+        return a
+    }
+    return gcd(b, a % b)
 }
 class User {
     constructor(public id: number) {}
     is_solving: boolean = false
     problems: string[] = []
-    username: string
+    tag: string
     current_answer: [string, number, number]
 }
 let functions = []
 functions[0] = function () {
-    let a = Math.floor(Math.random() * 10)
-    let b = Math.floor(Math.random() * 10)
+    let a = Math.floor(Math.random() * 100)
+    let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
 }
-let UserBase = {}
-function exitHandler() {
-    writeFileSync('./graph.json', JSON.stringify(UserBase))
+functions[7] = function () {
+    let NN = [2, 3, 4]
+    let R1000mas = [
+        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1125,
+    ]
+    let N = NN[Math.floor(Math.random() * (NN.length - 1))]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length - 1))]
+    let r = R1000 / 10 - 100
+    let Denom = Math.pow(R1000, N)
+    let Numer = 0
+    for (let i = 0; i < N; i++) {
+        Numer = Numer + Math.pow(1000, N - i) * Math.pow(R1000, i)
+    }
+    let gcdNumDen = gcd(Numer, Denom)
+    let S = Math.floor(Numer / gcdNumDen)
+    let X = Math.floor(Denom / gcdNumDen)
+    let multiplicator1 = Math.floor(1000000 / X)
+    let multiplicator2 = Math.floor(100000 / X)
+    if (multiplicator1 > 0) {
+        let mult = Math.floor(
+            Math.random() * (multiplicator2 + 1 - multiplicator1 + 1) +
+                multiplicator1 +
+                1,
+        )
+        S = S * mult
+        X = X * mult
+    }
+    let ANS = S
+    let part: string = ''
+    part +=
+        '\\text{В июле 2023 года планируется взять кредит в банке на некоторую сумму.}\\newline\\text{Условия его возврата таковы:}\\newline\\text{- каждый январь долг возрастает на }'
+    part += r
+    part +=
+        '\\text{% по сравнению с концом предыдущего года;}\\newline\\text{- с февраля по июнь каждого года необходимо выплатить часть долга, равную }'
+    part += X
+    part += '\\text{ рубль(-я,-ей).}\\newline'
+    part +=
+        '\\text{Сколько рублей было взято в банке, если известно, что он был полностью погашен }'
+    part += N
+    part += '\\text{ равными платежами (то есть за }'
+    part += N
+    part += '\\text{ года)?}'
+    return [part, ANS]
 }
-process.on('SIGINT', exitHandler.bind({ exit: true }))
+let UserBase: User[] = []
+exitHook(() => {
+    let buf = JSON.stringify(UserBase)
+    fs.writeFileSync('./graph.json', buf)
+})
 client.once('ready', () => {
-    UserBase = JSON.parse(readFileSync('./graph.json').toString())
+    //@ts-ignore
+    UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
 })
+function inBase(cc: any) {
+    if (UserBase[cc.id] === undefined) {
+        UserBase[cc.id] = new User(+cc.id)
+        UserBase[cc.id].tag = cc.tag
+    }
+    if (UserBase[cc.id].tag !== cc.tag) UserBase[cc.id].tag = cc.tag
+}
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return
-    //console.log(message.content)
-    //console.log(message.author.id)
-    if (UserBase[message.author.id] === undefined) {
-        UserBase[message.author.id] = new User(+message.author.id)
-        UserBase[message.author.id].username = message.author.username
-    }
-    if (UserBase[message.author.id].username !== message.author.username)
-        UserBase[message.author.id].username = message.author.username
-    if (message.content.substring(0, 12) === '/get problem') {
-        console.log(functions[0]())
-        console.log(message.content.substring(15, 13))
-    }
-    switch (message.content) {
-        case '/getfullrating':
+    inBase(message.author)
+    if (UserBase[message.author.id].is_solving === true) {
+        if (
+            message.content !==
+            UserBase[message.author.id].current_answer[1].toString()
+        ) {
+            UserBase[message.author.id].current_answer[2]++
+            message.react('❌')
+        } else {
+            UserBase[message.author.id].problems.push(
+                UserBase[message.author.id].current_answer[0],
+                UserBase[message.author.id].current_answer[2],
+            )
+            UserBase[message.author.id].is_solving = false
+            message.react('✅')
+        }
+    } else if (message.content[0] === '/')
+        message.author.send("Isn't such command")
+})
+client.on('interactionCreate', (interaction) => {
+    if (!interaction.isCommand()) return
+    inBase(interaction.user)
+    switch (interaction.commandName) {
+        case 'getfullrating':
             let sortable = []
             for (let c in UserBase) {
                 sortable.push([
-                    UserBase[c].username,
+                    UserBase[c].tag,
                     UserBase[c].problems.length / 2,
                 ])
             }
@@ -66,12 +137,19 @@ client.on('messageCreate', async (message) => {
             sortable.forEach((a, ind) => {
                 out += ind + 1 + '.' + a[0] + ' - ' + a[1] + '\n'
             })
-            if (out.length != 0) message.author.send(out)
+            if (out.length != 0) interaction.reply(out)
             break
-
-        case '/get problem':
-            UserBase[message.author.id].is_solving = true
-            let k = getSimpleEquation()
+        case 'showproblemtypes':
+            interaction.reply(ProblemsLine)
+            break
+        case 'getproblem':
+            let ccc: number = interaction.options.getInteger('number')
+            if (functions[ccc] === undefined) {
+                interaction.reply("Isn't such problem number")
+                return
+            }
+            UserBase[interaction.user.id].is_solving = true
+            let k = functions[ccc]()
             mjAPI.typeset(
                 {
                     math: k[0],
@@ -79,41 +157,32 @@ client.on('messageCreate', async (message) => {
                     svg: true,
                 },
                 function (data) {
-                    sharp(Buffer.from(data.svg))
+                    sharp(Buffer.from(data.svg), { density: 300 })
                         //@ts-ignore
+                        .modulate({ lightness: 255 })
                         .png()
-                        .resize(200)
                         .toFile('buf.png')
                         .then(() => {
-                            message.author.send({ files: ['./buf.png'] })
+                            if (functions[ccc].URL === undefined)
+                                interaction.reply({ files: ['./buf.png'] })
+                            else
+                                interaction.reply({
+                                    content: functions[ccc].URL,
+                                    files: ['./buf.png'],
+                                })
                             k.push(0)
-                            UserBase[message.author.id].current_answer = k
+                            UserBase[interaction.user.id].current_answer = k
                         })
                 },
             )
             break
-        case '/show problem types':
-            message.author.send(ProblemsLine)
-            break
-        default:
-            if (UserBase[message.author.id].is_solving === true) {
-                if (
-                    message.content !==
-                    UserBase[message.author.id].current_answer[1].toString()
-                ) {
-                    UserBase[message.author.id].current_answer[2]++
-                    message.react('❌')
-                } else {
-                    UserBase[message.author.id].problems.push(
-                        UserBase[message.author.id].current_answer[0],
-                        UserBase[message.author.id].current_answer[2],
-                    )
-                    //UserBase[message.author.id].current_answer[2] = 0
-                    UserBase[message.author.id].is_solving = false
-                    message.react('✅')
-                }
-            } else message.author.send('Got it')
-
+        case 'seturl':
+            let c: number = interaction.options.getInteger('number')
+            let kk: string = interaction.options.getString('url')
+            if (functions[c] !== undefined) {
+                functions[c].URL = kk
+                interaction.reply('confirmed')
+            }
             break
     }
 })

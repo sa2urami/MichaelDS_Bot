@@ -9,7 +9,7 @@ mjAPI.config({
 mjAPI.start()
 
 var yourMath =
-    ' \\dashv  \\dashv  \\dashv  x = a_0 + \\frac{1}{a_1 + \\frac{1}{a_2 + \\frac{1}{a_3 + a_4}}}  x = a_0 + \\frac{1}{a_1 + \\frac{1}{a_2 + \\frac{1}{a_3 + a_4}}}  x = a_0 + \\frac{1}{a_1 + \\frac{1}{a_2 + \\frac{1}{a_3 + a_4}}}  x = a_0 + \\frac{1}{a_1 + \\frac{1}{a_2 + \\frac{1}{a_3 + a_4}}} '
+    '\\text{HELLO WORLD} \\newline x = a_0 + \\frac{1}{a_1 + \\frac{1}{a_2 + \\frac{1}{a_3 + a_4}}} \\newline\\text{HELLO WORLD}'
 
 mjAPI.typeset(
     {
@@ -20,8 +20,11 @@ mjAPI.typeset(
     function (data) {
         if (!data.errors) {
             console.log(data.svg)
-            //@ts-ignore
-            sharp(Buffer.from(data.svg)).png().resize(1000).toFile('buf.png')
+            sharp(Buffer.from(data.svg))
+                //@ts-ignore
+                .png()
+                .resize(1000)
+                .toFile('buf.png')
         }
     },
 )
