@@ -33,6 +33,8 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
+//@ts-ignore
+//functions = JSON.parse(readFileSync('./functions.json'))
 functions[0] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
@@ -86,8 +88,12 @@ let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
     fs.writeFileSync('./graph.json', buf)
+    //let buf1 = JSON.stringify(functions)
+    ///fs.writeFileSync('./functions.json', buf1)
+    console.log('backup')
 })
 client.once('ready', () => {
+    //client.user.setAvatar('./avatar.png')
     //@ts-ignore
     UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
@@ -104,8 +110,7 @@ client.on('messageCreate', async (message) => {
     inBase(message.author)
     if (UserBase[message.author.id].is_solving === true) {
         if (
-            message.content !==
-            UserBase[message.author.id].current_answer[1].toString()
+            +message.content !== UserBase[message.author.id].current_answer[1]
         ) {
             UserBase[message.author.id].current_answer[2]++
             message.react('❌')
@@ -177,12 +182,16 @@ client.on('interactionCreate', (interaction) => {
             )
             break
         case 'seturl':
+            if (+interaction.user.id !== 706909530126155900) {
+                interaction.reply('Do not have permission')
+                break
+            }
             let c: number = interaction.options.getInteger('number')
             let kk: string = interaction.options.getString('url')
             if (functions[c] !== undefined) {
                 functions[c].URL = kk
                 interaction.reply('confirmed')
-            }
+            } else interaction.reply('There is no such function')
             break
     }
 })
