@@ -33,7 +33,7 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
-functions['MISHA'] = function () {
+functions['LALALA'] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
