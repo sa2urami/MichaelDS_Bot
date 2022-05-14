@@ -33,8 +33,6 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
-//@ts-ignore
-//functions = JSON.parse(readFileSync('./functions.json'))
 functions[0] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
@@ -70,30 +68,29 @@ functions[7] = function () {
     let ANS = S
     let part: string = ''
     part +=
-        '\\text{В июле 2023 года планируется взять кредит в банке на некоторую сумму.}\\newline\\text{Условия его возврата таковы:}\\newline\\text{- каждый январь долг возрастает на }'
+        'В июле 2023 года планируется взять кредит в банке на некоторую сумму.\nУсловия его возврата таковы:\n- каждый январь долг возрастает на '
     part += r
     part +=
-        '\\text{% по сравнению с концом предыдущего года;}\\newline\\text{- с февраля по июнь каждого года необходимо выплатить часть долга, равную }'
+        '% по сравнению с концом предыдущего года;\n- с февраля по июнь каждого года необходимо выплатить часть долга, равную '
     part += X
-    part += '\\text{ рубль(-я,-ей).}\\newline'
+    part += ' рубль(-я,-ей).\n'
     part +=
-        '\\text{Сколько рублей было взято в банке, если известно, что он был полностью погашен }'
+        'Сколько рублей было взято в банке, если известно, что он был полностью погашен '
     part += N
-    part += '\\text{ равными платежами (то есть за }'
+    part += ' равными платежами (то есть за '
     part += N
-    part += '\\text{ года)?}'
+    part += ' года)?'
     return [part, ANS]
 }
+functions[7].URL = 'YOUTUBE BANKIR URL'
+functions[7].is_text = 1
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
     fs.writeFileSync('./graph.json', buf)
-    //let buf1 = JSON.stringify(functions)
-    ///fs.writeFileSync('./functions.json', buf1)
     console.log('backup')
 })
 client.once('ready', () => {
-    //client.user.setAvatar('./avatar.png')
     //@ts-ignore
     UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
@@ -149,49 +146,44 @@ client.on('interactionCreate', (interaction) => {
             break
         case 'getproblem':
             let ccc: number = interaction.options.getInteger('number')
-            if (functions[ccc] === undefined) {
+            if (!functions[ccc]) {
                 interaction.reply("Isn't such problem number")
                 return
             }
             UserBase[interaction.user.id].is_solving = true
             let k = functions[ccc]()
-            mjAPI.typeset(
-                {
-                    math: k[0],
-                    format: 'TeX',
-                    svg: true,
-                },
-                function (data) {
-                    sharp(Buffer.from(data.svg), { density: 300 })
-                        //@ts-ignore
-                        .modulate({ lightness: 255 })
-                        .png()
-                        .toFile('buf.png')
-                        .then(() => {
-                            if (functions[ccc].URL === undefined)
-                                interaction.reply({ files: ['./buf.png'] })
-                            else
-                                interaction.reply({
-                                    content: functions[ccc].URL,
-                                    files: ['./buf.png'],
-                                })
-                            k.push(0)
-                            UserBase[interaction.user.id].current_answer = k
-                        })
-                },
-            )
-            break
-        case 'seturl':
-            if (+interaction.user.id !== 706909530126155900) {
-                interaction.reply('Do not have permission')
-                break
+            if (!functions[ccc].is_text) {
+                mjAPI.typeset(
+                    {
+                        math: k[0],
+                        format: 'TeX',
+                        svg: true,
+                    },
+                    function (data) {
+                        sharp(Buffer.from(data.svg), { density: 300 })
+                            //@ts-ignore
+                            .modulate({ lightness: 255 })
+                            .png()
+                            .toFile('buf.png')
+                            .then(() => {
+                                if (functions[ccc].URL === undefined)
+                                    interaction.reply({ files: ['./buf.png'] })
+                                else
+                                    interaction.reply({
+                                        content: functions[ccc].URL,
+                                        files: ['./buf.png'],
+                                    })
+                                k.push(0)
+                                UserBase[interaction.user.id].current_answer = k
+                            })
+                    },
+                )
+            } else {
+                if (!functions[ccc].URL) interaction.reply(k[0])
+                else interaction.reply(functions[ccc].URL + '\n' + k[0])
+                k.push(0)
+                UserBase[interaction.user.id].current_answer = k
             }
-            let c: number = interaction.options.getInteger('number')
-            let kk: string = interaction.options.getString('url')
-            if (functions[c] !== undefined) {
-                functions[c].URL = kk
-                interaction.reply('confirmed')
-            } else interaction.reply('There is no such function')
             break
     }
 })
