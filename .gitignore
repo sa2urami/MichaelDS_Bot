@@ -2,5 +2,6 @@ node_modules
 config.json
 graph.json
 buf.png
+commands.js
 .gitignore
 package-lock.json
