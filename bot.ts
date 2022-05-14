@@ -33,7 +33,7 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
-functions[0] = function () {
+functions['MISHA'] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
@@ -145,7 +145,7 @@ client.on('interactionCreate', (interaction) => {
             interaction.reply(ProblemsLine)
             break
         case 'getproblem':
-            let ccc: number = interaction.options.getInteger('number')
+            let ccc: string = interaction.options.getString('type')
             if (!functions[ccc]) {
                 interaction.reply("Isn't such problem number")
                 return
