@@ -19,21 +19,21 @@ let commands = [
                 .setDescription('Index of problem you will receive')
                 .setRequired(true),
         ),
-    new SlashCommandBuilder()
-        .setName('seturl')
-        .setDescription('Adding url into problem')
-        .addIntegerOption((option) =>
-            option
-                .setName('number')
-                .setDescription('Index of problem you will receive')
-                .setRequired(true),
-        )
-        .addStringOption((option) =>
-            option
-                .setName('url')
-                .setDescription('URL which will added')
-                .setRequired(true),
-        ),
+    // new SlashCommandBuilder()
+    //     .setName('seturl')
+    //     .setDescription('Adding url into problem')
+    //     .addIntegerOption((option) =>
+    //         option
+    //             .setName('number')
+    //             .setDescription('Index of problem you will receive')
+    //             .setRequired(true),
+    //     )
+    //     .addStringOption((option) =>
+    //         option
+    //             .setName('url')
+    //             .setDescription('URL which will added')
+    //             .setRequired(true),
+    //     ),
 ].map((command) => command.toJSON())
 const rest = new REST({ version: '9' }).setToken(token)
 

@@ -1,5 +1,6 @@
 node_modules
-
+config.json
+graph.json
 buf.png
 .gitignore
-
+package-lock.json

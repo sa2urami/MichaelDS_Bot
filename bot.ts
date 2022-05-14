@@ -33,8 +33,6 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
-//@ts-ignore
-//functions = JSON.parse(readFileSync('./functions.json'))
 functions[0] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
@@ -84,16 +82,15 @@ functions[7] = function () {
     part += '\\text{ года)?}'
     return [part, ANS]
 }
+functions[7].URL = 'YOUTUBE BANKIR URL'
+functions[7].is_text = 1
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
     fs.writeFileSync('./graph.json', buf)
-    //let buf1 = JSON.stringify(functions)
-    ///fs.writeFileSync('./functions.json', buf1)
     console.log('backup')
 })
 client.once('ready', () => {
-    //client.user.setAvatar('./avatar.png')
     //@ts-ignore
     UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
@@ -155,43 +152,43 @@ client.on('interactionCreate', (interaction) => {
             }
             UserBase[interaction.user.id].is_solving = true
             let k = functions[ccc]()
-            mjAPI.typeset(
-                {
-                    math: k[0],
-                    format: 'TeX',
-                    svg: true,
-                },
-                function (data) {
-                    sharp(Buffer.from(data.svg), { density: 300 })
-                        //@ts-ignore
-                        .modulate({ lightness: 255 })
-                        .png()
-                        .toFile('buf.png')
-                        .then(() => {
-                            if (functions[ccc].URL === undefined)
-                                interaction.reply({ files: ['./buf.png'] })
-                            else
-                                interaction.reply({
-                                    content: functions[ccc].URL,
-                                    files: ['./buf.png'],
-                                })
-                            k.push(0)
-                            UserBase[interaction.user.id].current_answer = k
-                        })
-                },
-            )
-            break
-        case 'seturl':
-            if (+interaction.user.id !== 706909530126155900) {
-                interaction.reply('Do not have permission')
-                break
+            if (!functions[ccc].is_text) {
+                mjAPI.typeset(
+                    {
+                        math: k[0],
+                        format: 'TeX',
+                        svg: true,
+                    },
+                    function (data) {
+                        sharp(Buffer.from(data.svg), { density: 300 })
+                            //@ts-ignore
+                            .modulate({ lightness: 255 })
+                            .png()
+                            .toFile('buf.png')
+                            .then(() => {
+                                if (functions[ccc].URL === undefined)
+                                    interaction.reply({ files: ['./buf.png'] })
+                                else
+                                    interaction.reply({
+                                        content: functions[ccc].URL,
+                                        files: ['./buf.png'],
+                                    })
+                                k.push(0)
+                                UserBase[interaction.user.id].current_answer = k
+                            })
+                    },
+                )
+            } else {
+                if (functions[ccc].URL === undefined)
+                    interaction.reply({ files: ['./buf.png'] })
+                else
+                    interaction.reply({
+                        content: functions[ccc].URL,
+                        files: ['./buf.png'],
+                    })
+                k.push(0)
+                UserBase[interaction.user.id].current_answer = k
             }
-            let c: number = interaction.options.getInteger('number')
-            let kk: string = interaction.options.getString('url')
-            if (functions[c] !== undefined) {
-                functions[c].URL = kk
-                interaction.reply('confirmed')
-            } else interaction.reply('There is no such function')
             break
     }
 })
