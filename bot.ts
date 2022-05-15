@@ -180,7 +180,10 @@ client.on('interactionCreate', (interaction) => {
                 )
             } else {
                 if (!functions[ccc].URL) interaction.reply(k[0])
-                else interaction.reply(functions[ccc].URL + '\n' + k[0])
+                else
+                    interaction.reply(
+                        '```' + k[0] + '```' + '\n' + functions[ccc].URL,
+                    )
                 k.push(0)
                 UserBase[interaction.user.id].current_answer = k
             }
