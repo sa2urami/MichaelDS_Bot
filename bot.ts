@@ -166,6 +166,9 @@ client.on('interactionCreate', async (interaction) => {
         case 'showproblemtypes':
             interaction.reply(ProblemsLine)
             break
+        case 'help':
+            interaction.reply('HELLO, NO HELP AVAILABLE;)')
+            break
         case 'getproblem':
             let ccc: string = interaction.options.getString('type')
             if (!functions[ccc]) {
