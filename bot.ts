@@ -1,5 +1,5 @@
 import { Client, Intents } from 'discord.js'
-import { token, ProblemsLine } from './config.json'
+import { token, ProblemsLine, guildId } from './config.json'
 import { readFileSync, writeFileSync, writeFile } from 'fs'
 import fs from 'graceful-fs'
 import mjAPI from 'mathjax-node'
@@ -103,7 +103,10 @@ function inBase(cc: any) {
     if (UserBase[cc.id].tag !== cc.tag) UserBase[cc.id].tag = cc.tag
 }
 client.on('messageCreate', async (message) => {
-    if (message.author.bot) return
+    let guild = await client.guilds.fetch(guildId)
+    let member = await guild.members.fetch(message.author.id)
+    if (message.author.bot || !member.roles.cache.has('975098706569347112'))
+        return
     inBase(message.author)
     if (UserBase[message.author.id].is_solving === true) {
         if (
@@ -122,8 +125,15 @@ client.on('messageCreate', async (message) => {
     } else if (message.content[0] === '/')
         message.author.send("Isn't such command")
 })
-client.on('interactionCreate', (interaction) => {
-    if (!interaction.isCommand()) return
+client.on('interactionCreate', async (interaction) => {
+    let guild = await client.guilds.fetch(guildId)
+    let member = await guild.members.fetch(interaction.user.id)
+    //console.log(member)
+    if (
+        !interaction.isCommand() ||
+        !member.roles.cache.has('975098706569347112')
+    )
+        return
     inBase(interaction.user)
     switch (interaction.commandName) {
         case 'getfullrating':
