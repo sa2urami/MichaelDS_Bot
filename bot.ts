@@ -164,7 +164,7 @@ client.on('interactionCreate', async (interaction) => {
             if (out.length != 0) interaction.reply(out)
             break
         case 'showproblemtypes':
-            interaction.reply(`'''
+            interaction.reply(`
             +----------------------------------+---------+------------------------+----------------+
             |               Col1               |  Col2   |          Col3          | Numeric Column |
             +----------------------------------+---------+------------------------+----------------+
@@ -172,7 +172,7 @@ client.on('interactionCreate', async (interaction) => {
             | Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
             | This is a row with only one cell |         |                        |                |
             +----------------------------------+---------+------------------------+----------------+
-            '''`)
+            `)
             break
         case 'help':
             interaction.reply('HELLO, NO HELP AVAILABLE;)')
