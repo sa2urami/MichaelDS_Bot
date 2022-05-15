@@ -38,6 +38,18 @@ functions['LALALA'] = function () {
     let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
 }
+functions['DADADA'] = function () {
+    let a = Math.floor(Math.random() * 100)
+    let b = 'DADA'
+    return [a + ' + ' + b, a]
+}
+functions['DADADA'].is_text = 1
+functions['DADADA'].URL='https://youtu.be/Y2eJKsAbU2w'
+functions['NONONO'] = function () {
+    let a = Math.floor(Math.random() * 100)
+    let b = 'NONO'
+    return [a + ' + ' + b, a]
+}
 functions[7] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
