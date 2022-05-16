@@ -25,6 +25,44 @@ var gcd = function (aa: number, bb: number) {
     }
     return gcd(b, a % b)
 }
+let sendd = function (interaction: any, obj: any) {
+    UserBase[interaction.user.id].is_solving = true
+    let k = obj()
+    if (!obj.is_text) {
+        mjAPI.typeset(
+            {
+                math: k[0],
+                format: 'TeX',
+                svg: true,
+            },
+            function (data) {
+                sharp(Buffer.from(data.svg), { density: 300 })
+                    //@ts-ignore
+                    .modulate({ lightness: 255 })
+                    .png()
+                    .toFile('buf.png')
+                    .then(() => {
+                        if (obj.URL === undefined)
+                            interaction.reply({
+                                files: ['./buf.png'],
+                            })
+                        else
+                            interaction.reply({
+                                content: obj.URL,
+                                files: ['./buf.png'],
+                            })
+                        k.push(0)
+                        UserBase[interaction.user.id].current_answer = k
+                    })
+            },
+        )
+    } else {
+        if (!obj.URL) interaction.reply(k[0])
+        else interaction.reply('```' + k[0] + '```' + '\n' + obj.URL)
+        k.push(0)
+        UserBase[interaction.user.id].current_answer = k
+    }
+}
 class User {
     constructor(public id: number) {}
     is_solving: boolean = false
@@ -33,24 +71,19 @@ class User {
     current_answer: [string, number, number]
 }
 let functions = []
-functions['LALALA'] = function () {
+functions[1] = []
+functions[7] = []
+functions[1]['LALALA'] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
 }
-functions['DADADA'] = function () {
-    let a = Math.floor(Math.random() * 100)
-    let b = 'DADA'
-    return [a + ' + ' + b, a]
+functions[1]['DFSDF'] = function () {
+    let a = Math.floor(Math.random() * 10)
+    let b = Math.floor(Math.random() * 10)
+    return [a + ' * ' + b, a * b]
 }
-functions['DADADA'].is_text = 1
-functions['DADADA'].URL='https://youtu.be/Y2eJKsAbU2w'
-functions['NONONO'] = function () {
-    let a = Math.floor(Math.random() * 100)
-    let b = 'NONO'
-    return [a + ' + ' + b, a]
-}
-functions[7] = function () {
+functions[7][0] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
         1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1125,
@@ -94,8 +127,8 @@ functions[7] = function () {
     part += ' года)?'
     return [part, ANS]
 }
-functions[7].URL = 'YOUTUBE BANKIR URL'
-functions[7].is_text = 1
+functions[7][0].URL = 'YOUTUBE BANKIR URL'
+functions[7][0].is_text = 1
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
@@ -117,7 +150,11 @@ function inBase(cc: any) {
 client.on('messageCreate', async (message) => {
     let guild = await client.guilds.fetch(guildId)
     let member = await guild.members.fetch(message.author.id)
-    if (message.author.bot || !member.roles.cache.has('975098706569347112'))
+    if (
+        !member ||
+        message.author.bot ||
+        !member.roles.cache.has('975098706569347112')
+    )
         return
     inBase(message.author)
     if (UserBase[message.author.id].is_solving === true) {
@@ -140,8 +177,8 @@ client.on('messageCreate', async (message) => {
 client.on('interactionCreate', async (interaction) => {
     let guild = await client.guilds.fetch(guildId)
     let member = await guild.members.fetch(interaction.user.id)
-    //console.log(member)
     if (
+        !member ||
         !interaction.isCommand() ||
         !member.roles.cache.has('975098706569347112')
     )
@@ -157,137 +194,75 @@ client.on('interactionCreate', async (interaction) => {
                 ])
             }
             sortable.sort((a, b) => b[1] - a[1])
-            let out = 'RATING\n'
+            let out =
+                '```' +
+                `
++-----+-----------------+------------+
+| IND |       TAG       |   COUNT    |
++-----+-----------------+------------+
+`
             sortable.forEach((a, ind) => {
-                out += ind + 1 + '.' + a[0] + ' - ' + a[1] + '\n'
+                out +=
+                    '|' +
+                    (ind + 1) +
+                    ' '.repeat(5 - (ind + 1).toString().length) +
+                    '|' +
+                    a[0] +
+                    ' '.repeat(17 - a[0].toString().length) +
+                    '|' +
+                    a[1] +
+                    ' '.repeat(12 - a[1].toString().length) +
+                    '|' +
+                    '\n'
             })
+            out += '+-----+-----------------+------------+'
+            out += '```'
             if (out.length != 0) interaction.reply(out)
             break
         case 'showproblemtypes':
-            interaction.reply('```'+
-`
-+----------------------------------+---------+------------------------+----------------+
-|               Col1               |  Col2   |          Col3          | Numeric Column |
-+----------------------------------+---------+------------------------+----------------+
-| Value 1                          | Value 2 | 123                    |           10.0 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| This is a row with only one cell |         |                        |                |
-+----------------------------------+---------+------------------------+----------------+
-`
-+'```')
-interaction.user.send('```'+
-`
-+----------------------------------+---------+------------------------+----------------+
-|               Col1               |  Col2   |          Col3          | Numeric Column |
-+----------------------------------+---------+------------------------+----------------+
-| Value 1                          | Value 2 | 123                    |           10.0 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| This is a row with only one cell |         |                        |                |
-+----------------------------------+---------+------------------------+----------------+
-`
-+'```')
-interaction.user.send('```'+
-`
-+----------------------------------+---------+------------------------+----------------+
-|               Col1               |  Col2   |          Col3          | Numeric Column |
-+----------------------------------+---------+------------------------+----------------+
-| Value 1                          | Value 2 | 123                    |           10.0 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| Separate                         | cols    | with a tab or 4 spaces |       -2,027.1 |
-| This is a row with only one cell |         |                        |                |
-+----------------------------------+---------+------------------------+----------------+
-`
-+'```')
+            let trs: string =
+                interaction.options.getString('specifical_problem')
+            if (trs == null) {
+                interaction.reply('ALL PROBLEMS')
+            } else {
+                switch (trs) {
+                    case '1':
+                        interaction.reply(`
+                        LALALA - BASIC SUM
+                        DFSDF - BASIC MULT
+                        `)
+                        break
+                    case '7':
+                        interaction.reply(`
+                        0 - ULTIMATE BANKIR TASK
+                        `)
+                        break
+                    default:
+                        interaction.reply('No such problem type')
+                        break
+                }
+            }
             break
         case 'help':
             interaction.reply('HELLO, NO HELP AVAILABLE;)')
             break
         case 'getproblem':
-            let ccc: string = interaction.options.getString('type')
+            let ccc: string = interaction.options.getString('problem')
             if (!functions[ccc]) {
                 interaction.reply("Isn't such problem number")
                 return
             }
-            UserBase[interaction.user.id].is_solving = true
-            let k = functions[ccc]()
-            if (!functions[ccc].is_text) {
-                mjAPI.typeset(
-                    {
-                        math: k[0],
-                        format: 'TeX',
-                        svg: true,
-                    },
-                    function (data) {
-                        sharp(Buffer.from(data.svg), { density: 300 })
-                            //@ts-ignore
-                            .modulate({ lightness: 255 })
-                            .png()
-                            .toFile('buf.png')
-                            .then(() => {
-                                if (functions[ccc].URL === undefined)
-                                    interaction.reply({ files: ['./buf.png'] })
-                                else
-                                    interaction.reply({
-                                        content: functions[ccc].URL,
-                                        files: ['./buf.png'],
-                                    })
-                                k.push(0)
-                                UserBase[interaction.user.id].current_answer = k
-                            })
-                    },
-                )
+            let cc: string = interaction.options.getString('subtype')
+            if (interaction.options.getString('subtype') !== null) {
+                if (!functions[ccc][cc]) {
+                    interaction.reply("Isn't such problem subtype")
+                    return
+                }
+                sendd(interaction, functions[ccc][cc])
             } else {
-                if (!functions[ccc].URL) interaction.reply(k[0])
-                else
-                    interaction.reply(
-                        '```' + k[0] + '```' + '\n' + functions[ccc].URL,
-                    )
-                k.push(0)
-                UserBase[interaction.user.id].current_answer = k
+                const keys = Object.keys(functions[ccc])
+                cc = keys[Math.floor(Math.random() * keys.length)]
+                sendd(interaction, functions[ccc][cc])
             }
             break
     }
