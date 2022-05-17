@@ -136,7 +136,7 @@ exitHook(() => {
     console.log('backup')
 })
 client.once('ready', () => {
-    //client.user.setUsername('MishaMathBot'); 
+    client.user.setUsername('FIBONACCI'); 
     //@ts-ignore
     UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
