@@ -136,8 +136,10 @@ exitHook(() => {
     console.log('backup')
 })
 client.once('ready', () => {
-    client.user.setUsername('FIBONACCI'); 
+    client.user.setAvatar('./fibo.png');
+    //client.user.setUsername('FIBONACCI'); 
     //@ts-ignore
+  
     UserBase = JSON.parse(readFileSync('./graph.json'))
     console.log('Ready!')
 })
