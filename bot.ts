@@ -84,6 +84,7 @@ functions[2]['sport'] = function () {
     let b = 0.1
     return [a, b]
 }
+functions[2]['sport'].is_text = 1
 functions[1]['DFSDF'] = function () {
     let a = Math.floor(Math.random() * 10)
     let b = Math.floor(Math.random() * 10)
