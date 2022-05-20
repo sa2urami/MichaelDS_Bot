@@ -72,11 +72,17 @@ class User {
 }
 let functions = []
 functions[1] = []
+functions[2] = []
 functions[15] = []
 functions[1]['LALALA'] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
     return [a + ' + ' + b, a + b]
+}
+functions[2]['sport'] = function () {
+    let a = 'В соревновании по биатлону участвуют спортсмены из 25 стран, одна из которых ― Россия. Всего на старт вышло 60 участников, из которых 6 ― из России. Порядок старта определяется жребием, стартуют спортсмены друг за другом. Какова вероятность того, что десятым стартовал спортсмен из России?'
+    let b = 0.1
+    return [a, b]
 }
 functions[1]['DFSDF'] = function () {
     let a = Math.floor(Math.random() * 10)
