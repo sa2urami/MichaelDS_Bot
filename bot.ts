@@ -127,8 +127,8 @@ functions[15][0] = function () {
     part += ' года)?'
     return [part, ANS]
 }
-functions[7][0].URL = 'YOUTUBE BANKIR URL'
-functions[7][0].is_text = 1
+functions[15][0].URL = 'YOUTUBE BANKIR URL'
+functions[15][0].is_text = 1
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
