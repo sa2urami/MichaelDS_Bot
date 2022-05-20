@@ -83,7 +83,7 @@ functions[1]['DFSDF'] = function () {
     let b = Math.floor(Math.random() * 10)
     return [a + ' * ' + b, a * b]
 }
-functions[7][0] = function () {
+functions[15][0] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
         1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1125,
