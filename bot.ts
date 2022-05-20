@@ -136,7 +136,8 @@ exitHook(() => {
     console.log('backup')
 })
 client.once('ready', () => {
-    client.user.setAvatar('./fibo.png');
+    client.user.setActivity('generating EGE problems & checking answers');
+    //client.user.setAvatar('./fibo.png');
     //client.user.setUsername('FIBONACCI'); 
     //@ts-ignore
   
