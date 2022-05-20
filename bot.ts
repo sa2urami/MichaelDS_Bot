@@ -72,7 +72,7 @@ class User {
 }
 let functions = []
 functions[1] = []
-functions[7] = []
+functions[15] = []
 functions[1]['LALALA'] = function () {
     let a = Math.floor(Math.random() * 100)
     let b = Math.floor(Math.random() * 100)
