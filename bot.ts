@@ -90,10 +90,58 @@ functions[1]['DFSDF'] = function () {
     let b = Math.floor(Math.random() * 10)
     return [a + ' * ' + b, a * b]
 }
+functions[15]['VDL'] = function (){
+    let R1000mas = [
+        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1110, 1120, 1125, 1130, 1140, 1150, 1200, 1250,
+    ]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length - 1))]
+    let a = Math.floor((R1000-1000)/100)+1
+    let b = Math.floor(10000/R1000)-1
+    let xxx=0
+    if (R1000 % 100 == 0)
+    {
+        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10 + (Math.floor(Math.random() * (9 - 0 + 1)) + 0)/100 + (Math.floor(Math.random() * (9 - 1 + 1)) + 1)/1000  
+    }
+    if ((R1000 % 100 != 0) && (R1000 % 10 == 0) )
+    {
+        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10 + (Math.floor(Math.random() * (9 - 1 + 1)) + 1)/100  
+    }
+    if (R1000 % 10 != 0)
+    {
+        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10
+    }
+    let Smas = [
+        1, 1.5, 2, 2.5, 3
+    ]
+    let S = Smas[Math.floor(Math.random() * (Smas.length - 1))]
+    let X2=R1000/1000*xxx*S*1000
+    let X1=(R1000/1000-xxx)*S*1000
+
+
+    let part: string = ''
+    let dateTime = new Date()
+    
+    part += '31 декабря '
+    part += (dateTime.getFullYear() + Math.floor(Math.random() * 4))
+    part += ' года Моня взял в банке '
+    part += S
+    part += ' млн рублей в кредит. Схема выплаты кредитa следующая:\n 31 декабря каждого следующего года банк начисляет проценты на оставшуюся сумму долга (то есть увеличивает долг на определённое количество процентов), затем Моня переводит очередной транш. Моня выплатил кредит за два транша, переводя в первый раз '
+    part += X1
+    part += ' тыс рублей, во второй — '
+    part += X2
+    part +=' тыс. рублей. Под какой процент банк выдал Моне кредит?'
+
+    let ANS = (R1000/1000-1)*100
+
+    return [part, ANS]
+
+}
+functions[15]['VDL'].URL = 'YOUTUBE VDL URL'
+functions[15]['VDL'].is_text = 1
 functions[15][0] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
-        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1125,
+        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1110, 1120, 1125, 1130, 1140, 1150, 1200, 1250,
     ]
     let N = NN[Math.floor(Math.random() * (NN.length - 1))]
     let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length - 1))]
