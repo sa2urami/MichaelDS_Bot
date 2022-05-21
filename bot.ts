@@ -116,6 +116,7 @@ functions[15]['VDL'] = function (){
     let S = Smas[Math.floor(Math.random() * (Smas.length - 1))]
     let X2=Math.floor(R1000/1000*xxx*S*1000000)
     let X1=Math.floor((R1000/1000-xxx)*S*1000000)
+    let ANS = (R1000/1000-1)*100
 
 
     let part: string = ''
@@ -130,9 +131,10 @@ functions[15]['VDL'] = function (){
     part += ' рублей, во второй — '
     part += X2
     part +=' рублей. Под какой процент банк выдал Моне кредит?'
+    part += ANS
 
-    let ANS = (R1000/1000-1)*100
 
+    
     return [part, ANS]
 
 }
