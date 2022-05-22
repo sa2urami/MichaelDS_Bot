@@ -110,6 +110,7 @@ functions[15]['VDL'] = function (){
     {
         xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10
     }
+    xxx=Math.round(xxx*1000)/1000 // Тайпскрипт ебаное блядь говно, какого хуя этим надо заморачиваться
     let Smas = [
         1, 1.5, 2, 2.5, 3
     ]
