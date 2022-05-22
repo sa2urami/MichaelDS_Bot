@@ -132,9 +132,9 @@ functions[15]['VDL'] = function (){
     part += ' рублей, во второй — '
     part += X2
     part +=' рублей. Под какой процент банк выдал Моне кредит?\n'
-    part +='PROBLEM TESTING:\n'
+    part +='PROBLEM DEBUGING:\n'
     part += 'R1000='+R1000+'\n'
-    part += 'a='+ANS+'\n'
+    part += 'a='+a+'\n'
     part += 'b='+b+'\n'
     part += 'xxx='+xxx+'\n'
     part += 'ANS='+ANS+'\n'
