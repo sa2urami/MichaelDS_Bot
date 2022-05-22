@@ -2,7 +2,7 @@ import { Client, Intents } from 'discord.js'
 import { token, ProblemsLine, guildId } from './config.json'
 import { readFileSync, writeFileSync, writeFile } from 'fs'
 import fs from 'graceful-fs'
-import Big from 'big.js';
+import Big from 'big.js'
 import mjAPI from 'mathjax-node'
 import sharp from 'sharp'
 import exitHook from 'exit-hook'
@@ -82,7 +82,7 @@ functions[1]['LALALA'] = function () {
 }
 functions[2]['sport'] = function () {
     let a = 'В соревновании по биатлону участвуют спортсмены из 25 стран, одна из которых ― Россия. Всего на старт вышло 60 участников, из которых 6 ― из России. Порядок старта определяется жребием, стартуют спортсмены друг за другом. Какова вероятность того, что десятым стартовал спортсмен из России?'
-    let x = new Big(123.4567)
+    let x:Big = Big(123.4567)
     let b=x.toNumber() 
     return [a, b]
 }
