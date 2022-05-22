@@ -260,9 +260,9 @@ client.on('interactionCreate', async (interaction) => {
             let out =
                 '```' +
                 `
-+-----+------------------------+------------+
-| IND |       TAG              |   COUNT    |
-+-----+------------------------+------------+
++-----+------------------------+--------------+
+|#    |NICKNAME                |PRBLMS SOLVED |
++-----+------------------------+--------------+
 `
             sortable.forEach((a, ind) => {
                 out +=
@@ -274,11 +274,11 @@ client.on('interactionCreate', async (interaction) => {
                     ' '.repeat(24 - a[0].toString().length) +
                     '|' +
                     a[1] +
-                    ' '.repeat(12 - a[1].toString().length) +
+                    ' '.repeat(14 - a[1].toString().length) +
                     '|' +
                     '\n'
             })
-            out += '+-----+------------------------+------------+'
+            out += '+-----+------------------------+--------------+'
             out += '```'
             if (out.length != 0) interaction.reply(out)
             break
