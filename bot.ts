@@ -117,8 +117,9 @@ functions[15]['VDL'] = function (){
     let S = Smas[Math.floor(Math.random() * (Smas.length - 1))]
     let X2=Math.floor(R1000/1000*xxx*S*1000000)
     let X1=Math.floor((R1000/1000-xxx)*S*1000000)
-    if(R1000 % 10 ==0) {let ANS = Math.floor((R1000/1000-1)*100)}
-    if(R1000 % 10 !=0) {let ANS = Math.floor((R1000/1000-1)*1000)/10}
+    let ANS = 0
+    if(R1000 % 10 ==0) {ANS = Math.floor((R1000/1000-1)*100)}
+    if(R1000 % 10 !=0) {ANS = Math.floor((R1000/1000-1)*1000)/10}
 
 
     let part: string = ''
