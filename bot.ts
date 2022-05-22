@@ -97,36 +97,42 @@ functions[1]['DFSDF'] = function () {
 }
 functions[15]['VDL'] = function (){
     let R1000mas = [
-        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1110, 1120, 1125, 1130, 1140, 1150, 1200, 1250,
+        Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1125), Big(1130), Big(1140), Big(1150), Big(1200), Big(1250),
     ]
     let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length - 1))]
-    let a = Math.floor((R1000-1000)/100)+1
-    let b = Math.floor(10000/R1000)-1
-    let xxx=0
-    if (R1000 % 100 == 0)
+    let a = (R1000.minus(1000)).div(100).round().plus(1)
+    let b = Big(10000).div(R1000).round(0,Big.roundDown).minus(1)
+    
+    let xxx=Big(0)
+    let yyy=Big(99)
+    if (R1000.mod(100).eq(0))
     {
-        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10 + (Math.floor(Math.random() * (9 - 0 + 1)) + 0)/100 + (Math.floor(Math.random() * (9 - 1 + 1)) + 1)/1000  
+        xxx = Big(Math.random()).times(b.minus(a).plus(1)).round(0,Big.roundDown).plus(a).div(10)
+        .plus(Big(Math.random()).times(Big(9).minus(Big(0)).plus(1)).round(0,Big.roundDown).plus(Big(0)).div(100))
+        .plus(Big(Math.random()).times(Big(9).minus(Big(1)).plus(1)).round(0,Big.roundDown).plus(Big(1)).div(1000))
     }
-    if ((R1000 % 100 != 0) && (R1000 % 10 == 0) )
+    if ((R1000.mod(100).gt(0)) && (R1000.mod(10).eq(0)) )
     {
-        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10 + (Math.floor(Math.random() * (9 - 1 + 1)) + 1)/100  
+        xxx = Big(Math.random()).times(b.minus(a).plus(1)).round(0,Big.roundDown).plus(a).div(10)
+        .plus(Big(Math.random()).times(Big(9).minus(Big(1)).plus(1)).round(0,Big.roundDown).plus(Big(1)).div(100))
     }
-    if (R1000 % 10 != 0)
+    if (R1000.mod(10).gt(0))
     {
-        xxx = (Math.floor(Math.random() * (b - a + 1)) + a)/10
+        xxx = Big(Math.random()).times(b.minus(a).plus(1)).round(0,Big.roundDown).plus(a).div(10)
     }
-    xxx=Math.round(xxx*1000)/1000 // Тайпскрипт ебаное блядь говно, какого хуя этим надо заморачиваться
+    
     let Smas = [
         1, 1.5, 2, 2.5, 3
     ]
     let S = Smas[Math.floor(Math.random() * (Smas.length - 1))]
-    let X2=Math.floor(R1000/1000*xxx*S*1000000)
-    let X1=Math.floor((R1000/1000-xxx)*S*1000000)
+    let S_Big=Big(S)
+    let X2=R1000.div(1000).times(xxx).times(S_Big).times(1000000).round()
+    let X1=R1000.div(1000).minus(xxx).times(S_Big).times(1000000).round()
     let ANS = 0
-    if(R1000 % 10 ==0) {ANS = Math.floor((R1000/1000-1)*100)}
-    if(R1000 % 10 !=0) {ANS = Math.floor((R1000/1000-1)*1000)/10}
-
-
+    if(R1000.mod(10).eq(0)) {ANS = R1000.div(1000).minus(1).times(100).round().toNumber()}
+    if(R1000.mod(10).gt(0)) {ANS = R1000.div(1000).minus(1).times(1000).round().div(10).toNumber()}
+    
+    
     let part: string = ''
     let dateTime = new Date()
     
@@ -138,13 +144,7 @@ functions[15]['VDL'] = function (){
     part += X1
     part += ' рублей, во второй — '
     part += X2
-    part +=' рублей. Под какой процент банк выдал Моне кредит?\n'
-    part +='PROBLEM DEBUGING:\n'
-    part += 'R1000='+R1000+'\n'
-    part += 'a='+a+'\n'
-    part += 'b='+b+'\n'
-    part += 'xxx='+xxx+'\n'
-    part += 'ANS='+ANS+'\n'
+    part +=' рублей. Под какой процент банк выдал Моне кредит?'
 
     
     return [part, ANS]
