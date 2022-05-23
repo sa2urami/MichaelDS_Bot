@@ -291,9 +291,9 @@ functions[15]['DDL2'] = function () {
     // XMas.forEach(function(value){console.log(value.toString())})
     XMas.sort()
     //console.log('Xborder='+XBorder.toString())
-    ANS_variants[0]=XBorder.div(XMas[0]).round(0,Big.roundUp).toString()
+    ANS_variants[0]=XBorder.div(XMas[0]).round(0,Big.roundUp)
     XMas.reverse()
-    ANS_variants[1]=XBorder.div(XMas[0]).round(0,Big.roundDown).toString()
+    ANS_variants[1]=XBorder.div(XMas[0]).round(0,Big.roundDown)
     
     //БЛОК формирования условия
     
