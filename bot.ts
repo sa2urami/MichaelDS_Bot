@@ -349,7 +349,7 @@ functions[15]['DDL2'] = function () {
         part += ' млн рублей'
     }
     
-    let ANS = ANS_variants[questionVariant]
+    let ANS = ANS_variants[questionVariant].toNumber()
     part += '\nANS='+ANS.toString()
     
     return [part, ANS]
