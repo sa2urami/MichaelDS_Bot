@@ -152,6 +152,92 @@ functions[15]['VDL'] = function (){
 }
 functions[15]['VDL'].URL = 'YOUTUBE VDL URL'
 functions[15]['VDL'].is_text = 1
+
+functions[15]['DDL1'] = function () {
+    let R1000mas = [
+        Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1125), Big(1130), Big(1140), Big(1150), Big(1200), Big(1250),
+    ]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+    let Nmas = [Big(6), Big(7), Big(8),]
+    let aMas = [] //Массив первых цифр после запятой для столбца долг
+    let bMas = [] //Массив вторых цифр после запятой для столбца долг
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во столбцов в таблице долг
+    
+    for (var i = 0; i < N.minus(2).toNumber(); i++) { //Формируем массив первых цифр после запятой в долях столбца долг (кроме цифры "0")
+        let gonext=true
+        while (gonext){
+            let a_candidate = DigitsMas[Math.floor(Math.random() * (DigitsMas.length-1))+1]
+            if(!aMas.includes(a_candidate)){
+                aMas[aMas.length]=a_candidate;
+                gonext=false
+            }
+        }
+    }
+    aMas.sort()
+    aMas.reverse()
+    
+    let podbor_needed = true //Формируем массив вторых цифр после запятой в долях столбца долг (включая цифру "0")
+    while(podbor_needed){
+        let bMas_candidate = []
+        for (var i = 0; i < N.minus(2).toNumber(); i++) {
+            bMas_candidate[bMas_candidate.length]=DigitsMas[Math.floor(Math.random() * (DigitsMas.length))]
+        }
+        let sum = Big(0)
+        bMas_candidate.forEach(function(value){sum =sum.plus(value)})
+        console.log('sum='+sum.toString())
+        if(sum.mod(10).eq(0)){
+            podbor_needed = false
+            bMas=bMas_candidate
+        }
+    
+    
+    }
+    //БЛОК формирования условия
+    
+    let dateTime = new Date()
+        
+    let part: string = '15-го января '
+    part += (dateTime.getFullYear() - Math.floor(Math.random() * 3))
+    part += ' года Моне был выдан кредит на развитие бизнеса. В таблице представлен график его погашения.\n'
+    part += '```'
+    part += '\n'
+    part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
+    //Формируем первую строку таблицы
+    part +='| Дата                          |'
+    for(var i=0;i<N.toNumber();i++)
+    {
+        part += ' 15.0'+(i+1).toString()+' |'
+    }
+    part += '\n'
+    part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
+    //Формируем вторкую строку таблицы
+    part += '| Долг (в процентах от кредита) | 100%  |'
+    for(var i=0;i<N.minus(2).toNumber();i++)
+    {
+        part += ' '+ aMas[i].toString() + bMas[i].toString() +'%'+'   |'
+    }
+    part += '  0%   |'
+    part += '\n'
+    part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
+    part += '```'
+    part += '\n'
+    part += 'В конце каждого месяца, начиная с января, текущий долг увеличивался на '
+    part += R1000.div(1000).minus(1).times(100).toString()
+    part += '%, а выплаты по погашению кредита происходили в первой половине каждого месяца, начиная с февраля. На сколько процентов общая сумма выплат при таких условиях больше суммы самого кредита?'
+    
+    //БЛОК вычисления ответа к задаче
+    let sum_aMas=Big(0)
+    let sum_bMas=Big(0)
+    aMas.forEach(function(value){sum_aMas =sum_aMas.plus(value)})
+    bMas.forEach(function(value){sum_bMas =sum_bMas.plus(value)})
+    let ANS = R1000.div(10).plus(sum_aMas.times(10).plus(sum_bMas).times(R1000.div(1000).minus(1))).minus(100).toNumber()
+
+    return [part, ANS]
+}
+functions[15]['DDL1'].URL = 'YOUTUBE DDL1 URL'
+functions[15]['DDL1'].is_text = 1
+
 functions[15]['RV1Q1'] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
@@ -312,9 +398,11 @@ client.on('interactionCreate', async (interaction) => {
                         interaction.reply('```'+'ТИПЫ 15-й ЗАДАЧИ\n' +
 `
 +-------+----------------------------------------------------------+
-|  Код  | Описание                                                 |
+| Код   | Описание                                                 |
 +-------+----------------------------------------------------------+
-|  VDL  | Выплаты даны в лоб. Найти процент                        |
+| VDL   | Выплаты даны в лоб. Найти процент.                       |
++-------+----------------------------------------------------------+
+| DDL1  | Долг дан в лоб. Найти пропорцию выплаты/кредит           |
 +-------+----------------------------------------------------------+
 | RV1Q1 | Равные выплаты. Обычная. Найти сумму кредита, зная N,X,R |
 +-------+----------------------------------------------------------+
