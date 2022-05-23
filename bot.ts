@@ -185,7 +185,6 @@ functions[15]['DDL1'] = function () {
         }
         let sum = Big(0)
         bMas_candidate.forEach(function(value){sum =sum.plus(value)})
-        console.log('sum='+sum.toString())
         if(sum.mod(10).eq(0)){
             podbor_needed = false
             bMas=bMas_candidate
@@ -216,7 +215,7 @@ functions[15]['DDL1'] = function () {
     {
         part += ' '+ aMas[i].toString() + bMas[i].toString() +'%'+'   |'
     }
-    part += '  0%   |'
+    part += ' 0%    |'
     part += '\n'
     part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
     part += '\n'
