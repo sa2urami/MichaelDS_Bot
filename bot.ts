@@ -200,7 +200,6 @@ functions[15]['DDL1'] = function () {
     let part: string = '15-го января '
     part += (dateTime.getFullYear() - Math.floor(Math.random() * 3))
     part += ' года Моне был выдан кредит на развитие бизнеса. В таблице представлен график его погашения.\n'
-    part += '```'
     part += '\n'
     part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
     //Формируем первую строку таблицы
@@ -220,7 +219,6 @@ functions[15]['DDL1'] = function () {
     part += '  0%   |'
     part += '\n'
     part += '+-------------------------------+'+'-------+'.repeat(N.toNumber())+'\n'
-    part += '```'
     part += '\n'
     part += 'В конце каждого месяца, начиная с января, текущий долг увеличивался на '
     part += R1000.div(1000).minus(1).times(100).toString()
