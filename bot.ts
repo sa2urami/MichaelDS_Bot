@@ -482,6 +482,128 @@ functions[15]['DDL3'] = function () {
 }
 functions[15]['DDL3'].URL = 'YOUTUBE DDL3 URL'
 functions[15]['DDL3'].is_text = 1
+
+functions[15]['DDL4'] = function () {
+    let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+    let sumXborderMas = [Big(13),Big(13.5),Big(14),Big(14.5),Big(15),Big(15.5),Big(16),Big(16.5),Big(17),Big(17.5),Big(18),Big(18.5),Big(19),Big(19.5),Big(20),Big(20.5),Big(21),Big(21.5),Big(22),Big(22.5),
+        Big(23),Big(23.5),Big(24),Big(24.5),Big(25),Big(25.5),Big(26),Big(26.5),Big(27),Big(27.5),Big(28),Big(28.5),Big(29),Big(29.5),Big(30),Big(30.5),Big(31),Big(31.5),Big(32),Big(32.5),]
+    let Nmas = [Big(4),Big(5), Big(6), Big(7), Big(8),]
+    let questionVariantMas = [0,1] //Массив для вариантов вопроса к задаче
+    let aMas = [] //Массив первых цифр после запятой для столбца долг
+    let bMas = [] //Массив вторых цифр после запятой для столбца долг
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во столбцов в таблице долг
+    let questionVariant = questionVariantMas[Math.floor(Math.random() * (questionVariantMas.length))] //Случайно выбираем, какой вопрос будем ставить: [0] для вопроса, когда сумма выплат больше sumXborder, [1] - когда спрашивают, чтобы сумма выплат меньше sumXborder
+    let sumXBorder = sumXborderMas[Math.floor(Math.random() * (sumXborderMas.length))]
+    for (var i = 0; i < N.minus(2).toNumber(); i++) { //Формируем массив первых цифр после запятой в долях столбца долг (кроме цифры "0")
+        let gonext=true
+        while (gonext){
+            let a_candidate = DigitsMas[Math.floor(Math.random() * (DigitsMas.length-1))+1]
+            if(!aMas.includes(a_candidate)){
+                aMas[aMas.length]=a_candidate;
+                gonext=false
+            }
+        }
+    }
+    aMas.sort()
+    aMas.reverse()
+    
+    let podbor_needed = true //Формируем массив вторых цифр после запятой в долях столбца долг (включая цифру "0")
+    while(podbor_needed){
+        let bMas_candidate = []
+        for (var i = 0; i < N.minus(2).toNumber(); i++) {
+            bMas_candidate[bMas_candidate.length]=DigitsMas[Math.floor(Math.random() * (DigitsMas.length))]
+        }
+        let sum = Big(0)
+        bMas_candidate.forEach(function(value){sum =sum.plus(value)})
+        if(sum.mod(10).eq(0)){
+            podbor_needed = false
+            bMas=bMas_candidate
+        }
+    
+    
+    }
+    //БЛОК расчета ответа
+    //Расчитываем сумму долей долга
+    let sumD = Big(0)
+    aMas.forEach(function(value){sumD =sumD.plus(value.div(10))})
+    bMas.forEach(function(value){sumD =sumD.plus(value.div(100))})
+    
+    let Smin=Big(1).div(Big(1.29).plus(Big(0.29).times(sumD))).times(sumXBorder).round(0,Big.roundUp)
+    let Smax=Big(1).div(Big(1.02).plus(Big(0.02).times(sumD))).times(sumXBorder).round(0,Big.roundDown)
+    
+    let S = Big(0) //генерурем случайное S между S_min S_max
+    while(!(Smax.gt(S) && S.gt(Smin))){
+        S=Smin.plus(Big(Math.random()).times(15).round())
+        
+    }
+    
+    // aMas.forEach(function(value){console.log('a[i]='+value.toString())})
+    // bMas.forEach(function(value){console.log('b[i]='+value.toString())})
+    let ANS_variants = []
+    ANS_variants[0]=sumXBorder.div(S).plus(sumD).div(sumD.plus(1)).round(2,Big.roundUp).minus(1).times(100)
+    ANS_variants[1]=sumXBorder.div(S).plus(sumD).div(sumD.plus(1)).round(2,Big.roundDown).minus(1).times(100)
+    
+    //БЛОК формирования условия
+    
+    let dateTime = new Date()
+        
+    let part: string = '15-го января '
+    let debtStartYear = dateTime.getFullYear() + Math.floor(Math.random() * 4)
+    part += debtStartYear.toString()
+    part += ' года Сара планирует взять кредит в банке на '
+    part += N.minus(1).toString() 
+    if(N.gt(5)) {part += ' месяцев'}
+    if(Big(6).gt(N))  {part += ' месяца'}
+    part += ' в размере '
+    part += S.toString()
+    part += ' млн рублей. Условия его возврата таковы:\n'
+    part += '— 1-го числа каждого месяца долг увеличивается на r процентов по сравнению с концом предыдущего месяца, где r — целое число;\n'
+    part += '— со 2-го по 14-е число каждого месяца необходимо выплатить часть долга;\n'
+    part += '— 15-го числа каждого месяца долг должен составлять некоторую сумму в соответствии со следующей таблицей.\n'
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+    //Формируем первую строку таблицы
+    part += '| Дата                |'
+    for(var i=0;i<N.toNumber();i++)
+    {
+        part += ' 15.0'+(i+1).toString()+'     |'
+    }
+    
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+    //Формируем вторкую строку таблицы
+    part += '| Долг (в млн рублей) | '
+    part += S.toString()+' '.repeat(10-S.toString().length)+'|'
+    
+    
+    for(var i=0;i<N.minus(2).toNumber();i++)
+    {
+        part += ' '+ S.times(aMas[i].div(10).plus(bMas[i].div(100))).toString() +' '.repeat(10-S.times(aMas[i].div(10).plus(bMas[i].div(100))).toString().length)+'|'
+    
+    }
+    
+    part += ' 0         |'
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+    
+    part += '\n'
+    
+    if(questionVariant==0){
+        part += 'Найдите наименьшее значение r, при котором общая сумма выплат будет больше '
+        part += sumXBorder.toString()
+        part += ' млн рублей'
+    }
+    if(questionVariant==1){
+        part += 'Найдите наибольшее значение r, при котором общая сумма выплат будет меньше '
+        part += sumXBorder.toString()
+        part += ' млн рублей'
+    }
+    
+    let ANS = ANS_variants[questionVariant].toNumber()
+    return [part,ANS]
+}
+functions[15]['DDL4'].URL = 'YOUTUBE DDL4 URL'
+functions[15]['DDL4'].is_text = 1
 functions[15]['RV1Q1'] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
@@ -650,7 +772,9 @@ client.on('interactionCreate', async (interaction) => {
 +-------+----------------------------------------------------------+
 | DDL2  | Долг дан в лоб. Каждая выплата > (или <) чего-то         |
 +-------+----------------------------------------------------------+
-| DDL3  | Долг дан в лоб. Сумма выплат > (или <) чего-то           |
+| DDL3  | Долг дан в лоб. Сумма выплат > (или <) чего-то, найти S  |
++-------+----------------------------------------------------------+
+| DDL4  | Долг дан в лоб. Сумма выплат > (или <) чего-то, найти r  |
 +-------+----------------------------------------------------------+
 | RV1Q1 | Равные выплаты. Обычная. Найти сумму кредита, зная N,X,R |
 +-------+----------------------------------------------------------+
