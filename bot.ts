@@ -26,6 +26,21 @@ var gcd = function (aa: number, bb: number) {
     }
     return gcd(b, a % b)
 }
+var gcdBIG = function (aa: Big, bb: Big) {
+    let a = aa,
+        b = bb
+    if (b.eq(0)) {
+        return a
+    }
+    return gcdBIG(b, a.mod(b))
+}
+
+const lcm = (...arr) => {
+    const gcd = (x, y) => (!y ? x : gcd(y, x % y));
+    const _lcm = (x, y) => (x * y) / gcd(x, y);
+    return [...arr].reduce((a, b) => _lcm(a, b));
+  };
+
 let sendd = function (interaction: any, obj: any) {
     UserBase[interaction.user.id].is_solving = true
     let k = obj()
@@ -604,6 +619,114 @@ functions[15]['DDL4'] = function () {
 }
 functions[15]['DDL4'].URL = 'YOUTUBE DDL4 URL'
 functions[15]['DDL4'].is_text = 1
+functions[15]['DDL5'] = function () {
+    let part: string = ''
+    let ANS = 10000
+    while (ANS == 10000) //генерируем задачу, пока не получим вариант не со скучным ответом
+    {
+    let R1000mas = [
+        Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1125), Big(1130), Big(1140), Big(1150), Big(1200), Big(1250),
+    ]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+    let Nmas = [Big(4),Big(5), Big(6), Big(7), Big(8),]
+    let aMas = [] //Массив первых цифр после запятой для столбца долг
+    let bMas = [] //Массив вторых цифр после запятой для столбца долг
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во столбцов в таблице долг
+    for (var i = 0; i < N.minus(2).toNumber(); i++) { //Формируем массив первых цифр после запятой в долях столбца долг (кроме цифры "0")
+        let gonext=true
+        while (gonext){
+            let a_candidate = DigitsMas[Math.floor(Math.random() * (DigitsMas.length-1))+1]
+            if(!aMas.includes(a_candidate)){
+                aMas[aMas.length]=a_candidate;
+                gonext=false
+            }
+        }
+    }
+    aMas.sort()
+    aMas.reverse()
+
+    let podbor_needed = true //Формируем массив вторых цифр после запятой в долях столбца долг (включая цифру "0")
+    while(podbor_needed){
+        let bMas_candidate = []
+        for (var i = 0; i < N.minus(2).toNumber(); i++) {
+            bMas_candidate[bMas_candidate.length]=DigitsMas[Math.floor(Math.random() * (DigitsMas.length))]
+        }
+        let sum = Big(0)
+        bMas_candidate.forEach(function(value){sum =sum.plus(value)})
+        if(sum.mod(10).eq(0)){
+            podbor_needed = false
+            bMas=bMas_candidate
+        }
+
+
+    }
+    //БЛОК расчета ответа
+    //Расчитываем стоблец выплат в долях от S
+    let XMas=[]
+    XMas[0]=R1000.div(1000).minus(aMas[0].div(10).plus(bMas[0].div(100)))
+    for (var i=1;i<N.minus(2).toNumber();i++){
+        XMas[i]=R1000.div(1000).times(aMas[i-1].div(10).plus(bMas[i-1].div(100))).minus(aMas[i].div(10).plus(bMas[i].div(100)))
+    }
+    XMas[N.minus(2).toNumber()]=R1000.div(1000).times(aMas[N.minus(3).toNumber()].div(10).plus(bMas[N.minus(3).toNumber()].div(100)))
+
+    let denominatorMas = []
+    XMas.forEach(function(value){denominatorMas[denominatorMas.length]=Big(1e6).div(gcdBIG(Big(1e6),Big(1e6).times(value))).toNumber()})
+
+
+
+
+
+    //БЛОК формирования условия
+
+    let dateTime = new Date()
+    part = ''    
+    part += 'В июле '
+    let debtStartYear = dateTime.getFullYear() + Math.floor(Math.random() * 4)
+    part += debtStartYear.toString()
+    part += ' года Сара планирует взять кредит в банке на '
+    part += N.minus(1).toString() 
+    if(N.gt(5)) {part += ' лет'}
+    if(Big(6).gt(N))  {part += ' года'}
+    part += ' в размере S тысяч рублей, где S — целое число. Условия его возврата таковы:\n'
+    part += '− каждый январь долг увеличивается на '
+    part += R1000.div(1000).minus(1).times(100).toString()
+    part += '% по сравнению с концом предыдущего года;\n'
+    part += '− с февраля по июнь каждого года необходимо выплатить одним платежом часть долга;\n'
+    part += '− в июле каждого года долг должен составлять часть кредита в соответствии со следующей таблицей\n'
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+    //Формируем первую строку таблицы
+    part += '| Месяц и год         |'
+    for(var i=0;i<N.toNumber();i++)
+    {
+        part += ' июль '+(debtStartYear+i).toString()+' |'
+    }
+
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+    //Формируем вторкую строку таблицы
+    part += '| Долг (в млн рублей) | S         |'
+
+
+    for(var i=0;i<N.minus(2).toNumber();i++)
+    {
+        part += ' 0.'+ aMas[i].toString() + bMas[i].toString() +'*S'+'    |'
+    }
+
+    part += ' 0         |'
+    part += '\n'
+    part += '+---------------------+'+'-----------+'.repeat(N.toNumber())+'\n'
+
+    part += '\n'
+    part += 'Найдите наименьшее значение S, при котором каждая из выплат будет составлять целое число тысяч рублей.'
+
+    ANS = lcm(...denominatorMas)
+    }
+    return [part,ANS]
+}
+functions[15]['DDL5'].URL = 'YOUTUBE DDL5 URL'
+functions[15]['DDL5'].is_text = 1
 functions[15]['RV1Q1'] = function () {
     let NN = [2, 3, 4]
     let R1000mas = [
@@ -775,6 +898,8 @@ client.on('interactionCreate', async (interaction) => {
 | DDL3  | Долг дан в лоб. Сумма выплат > (или <) чего-то, найти S  |
 +-------+----------------------------------------------------------+
 | DDL4  | Долг дан в лоб. Сумма выплат > (или <) чего-то, найти r  |
++-------+----------------------------------------------------------+
+| DDL5  | Долг дан в лоб. Найти min S, чтобы каждая выплата целая  |
 +-------+----------------------------------------------------------+
 | RV1Q1 | Равные выплаты. Обычная. Найти сумму кредита, зная N,X,R |
 +-------+----------------------------------------------------------+
