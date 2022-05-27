@@ -868,6 +868,61 @@ functions[15]['RV1Q3'] = function () {
 functions[15]['RV1Q3'].URL = 'YOUTUBE RV1Q3 URL'
 functions[15]['RV1Q3'].is_text = 1
 
+functions[15]['RV1Q4'] = function () {
+    let R1000mas = [Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1125), Big(1130), Big(1140), Big(1150), Big(1200), Big(1250),]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+    let Nmas = [Big(2),Big(3), Big(4),] // Большее число строк заебешься считать
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во равных выплат
+    
+    let Denom = R1000.pow(N.toNumber())
+    let Numer = Big(0)
+    for (let i = 0; i < N; i++) {
+        Numer = Numer.plus(Big(1000).pow(N.toNumber()-i).times(R1000.pow(i)))
+    }
+    let gcdNumDen = gcdBIG(Numer, Denom)
+    let S = Numer.div(gcdNumDen)
+    let X = Denom.div(gcdNumDen)
+    let multiplicator1 = Big(1000000).div(X).round(0,Big.roundDown)
+    let multiplicator2 = Big(100000).div(X).round(0,Big.roundDown)
+    if (multiplicator1.gt(0)) {
+        let mult = Big(Math.random()).times(multiplicator1.plus(1).minus(multiplicator2)).plus(multiplicator2).round(0,Big.roundDown)   
+        S = S.times(mult)
+        X = X.times(mult)
+    }
+    let ANS = X.times(N).toNumber()
+    let part: string = ''
+    let dateTime = new Date()
+    
+    part +='В июле  '
+    part += (dateTime.getFullYear() + Math.floor(Math.random() * 4)) 
+    part += ' года планируется взять кредит на сумму '
+    part += S.toString()
+    part += ' рублей. Условия возврата таковы:\n — в январе каждого года долг увеличивается на '
+    part += R1000.div(10).minus(100).toString()
+    part += '% по сравнению с предыдущим годом;\n'
+    part += '— с февраля по июнь нужно выплатить часть долга одним платежом.\n'
+    
+    part += 'Сколько рублей будет выплачено банку, если известно, что кредит будет полностью погашен '
+    part += N.toString()
+    part += ' равными платежами (то есть за '
+    part += N.toString()
+    part += ' года)?'
+
+    return [part, ANS]
+}
+functions[15]['RV1Q4'].URL = 'YOUTUBE RV1Q4 URL'
+functions[15]['RV1Q4'].is_text = 1
+
+
+
+
+
+
+
+
+
+
 
 
 let UserBase: User[] = []
@@ -992,6 +1047,7 @@ client.on('interactionCreate', async (interaction) => {
 | RV1Q1 | Равные выплаты. Обычная. Найти сумму кредита, зная N,X,R                    |
 | RV1Q2 | Равные выплаты. Обычная. То же, что RV1Q1, только в условии не X, а сумма X |
 | RV1Q3 | Равные выплаты. Обычная. Теперь надо найти выплату X, зная S                |
+| RV1Q4 | Равные выплаты. Обычная. То же, что RV1Q3, только теперь в ответ сумму X    |
 +-------+-----------------------------------------------------------------------------+                        
 ` +'```' )
                         break
