@@ -728,50 +728,44 @@ functions[15]['DDL5'] = function () {
 functions[15]['DDL5'].URL = 'YOUTUBE DDL5 URL'
 functions[15]['DDL5'].is_text = 1
 functions[15]['RV1Q1'] = function () {
-    let NN = [2, 3, 4]
-    let R1000mas = [
-        1010, 1020, 1030, 1040, 1050, 1060, 1070, 1080, 1090, 1100, 1110, 1120, 1125, 1130, 1140, 1150, 1200, 1250,
-    ]
-    let N = NN[Math.floor(Math.random() * (NN.length - 1))]
-    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length - 1))]
-    let r = R1000 / 10 - 100
-    let Denom = Math.pow(R1000, N)
-    let Numer = 0
-    for (let i = 0; i < N; i++) {
-        Numer = Numer + Math.pow(1000, N - i) * Math.pow(R1000, i)
-    }
-    let gcdNumDen = gcd(Numer, Denom)
-    let S = Math.floor(Numer / gcdNumDen)
-    let X = Math.floor(Denom / gcdNumDen)
-    let multiplicator1 = Math.floor(1000000 / X)
-    let multiplicator2 = Math.floor(100000 / X)
-    if (multiplicator1 > 0) {
-        let mult = Math.floor(
-            Math.random() * (multiplicator2 + 1 - multiplicator1 + 1) +
-                multiplicator1 +
-                1,
-        )
-        S = S * mult
-        X = X * mult
-    }
-    let ANS = S
-    let part: string = ''
-    let dateTime = new Date()
-    
-    part +='В июле '
-    part += (dateTime.getFullYear() + Math.floor(Math.random() * 4))
-    part += ' года планируется взять кредит в банке на некоторую сумму.\nУсловия его возврата таковы:\n- каждый январь долг возрастает на '
-    part += r
-    part +=
-        '% по сравнению с концом предыдущего года;\n- с февраля по июнь каждого года необходимо выплатить часть долга, равную '
-    part += X
-    part += ' рубль(-я,-ей).\n'
-    part +=
-        'Сколько рублей было взято в банке, если известно, что он был полностью погашен '
-    part += N
-    part += ' равными платежами (то есть за '
-    part += N
-    part += ' года)?'
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+let Nmas = [Big(2),Big(3), Big(4),] // Большее число строк заебешься считать
+let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во равных выплат
+
+let Denom = R1000.pow(N.toNumber())
+let Numer = Big(0)
+for (let i = 0; i < N; i++) {
+    Numer = Numer.plus(Big(1000).pow(N.toNumber()-i).times(R1000.pow(i)))
+}
+let gcdNumDen = gcdBIG(Numer, Denom)
+let S = Numer.div(gcdNumDen)
+let X = Denom.div(gcdNumDen)
+let multiplicator1 = Big(1000000).div(X).round(0,Big.roundDown)
+let multiplicator2 = Big(100000).div(X).round(0,Big.roundDown)
+if (multiplicator1.gt(0)) {
+    let mult = Big(Math.random()).times(multiplicator1.plus(1).minus(multiplicator2)).plus(multiplicator2).round(0,Big.roundDown)   
+    S = S.times(mult)
+    X = X.times(mult)
+}
+let ANS = S.toNumber()
+let part: string = ''
+let dateTime = new Date()
+
+part +='В июле '
+part += (dateTime.getFullYear() + Math.floor(Math.random() * 4))
+part += ' года планируется взять кредит в банке на некоторую сумму.\nУсловия его возврата таковы:\n- каждый январь долг возрастает на '
+part += R1000.div(10).minus(100).toString()
+part +=
+    '% по сравнению с концом предыдущего года;\n- с февраля по июнь каждого года необходимо выплатить часть долга, равную '
+part += X.toString()
+part += ' рубль(-я,-ей).\n'
+part +=
+    'Сколько рублей было взято в банке, если известно, что он был полностью погашен '
+part += N.toString()
+part += ' равными платежами (то есть за '
+part += N.toString()
+part += ' года)?'
     return [part, ANS]
 }
 functions[15]['RV1Q1'].URL = 'YOUTUBE BANKIR URL'
