@@ -898,7 +898,7 @@ functions[15]['RV1Q4'] = function () {
     let part: string = ''
     let dateTime = new Date()
     
-    part +='В июле  '
+    part +='В июле '
     part += (dateTime.getFullYear() + Math.floor(Math.random() * 4)) 
     part += ' года планируется взять кредит на сумму '
     part += S.toString()
@@ -946,7 +946,7 @@ functions[15]['RV1Q5'] = function () {
     let part: string = ''
     let dateTime = new Date()
     
-    part +='В июле  '
+    part +='В июле '
     part += (dateTime.getFullYear() + Math.floor(Math.random() * 4)) 
     part += ' года планируется взять кредит на некоторую сумму. Условия возврата таковы:\n'
     part += '— в январе каждого года долг увеличивается на '
@@ -968,8 +968,45 @@ return [part, ANS]
 functions[15]['RV1Q5'].URL = 'YOUTUBE RV1Q5 URL'
 functions[15]['RV1Q5'].is_text = 1
 
+functions[15]['RV2'] = function () {
+    let R1000mas = [Big(1100), Big(1200), Big(1300),] //Урезаные проценты, чтобы R^2 получалось с двумя знаками после запятой
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let R1000_initial=R1000
+    R1000=R1000.div(1000).pow(2).times(1000)
+    let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
+    let Nmas = [Big(4),] // Большее число строк заебешься считать
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))] //Получили кол-во равных выплат
+    N=N.div(2)
+    let Denom = R1000.pow(N.toNumber())
+    let Numer = Big(0)
+    for (let i = 0; i < N; i++) {
+        Numer = Numer.plus(Big(1000).pow(N.toNumber()-i).times(R1000.pow(i)))
+    }
+    let gcdNumDen = gcdBIG(Numer, Denom)
+    let S = Numer.div(gcdNumDen)
+    let X = Denom.div(gcdNumDen)
+    let multiplicator1 = Big(1000000).div(X).round(0,Big.roundDown)
+    let multiplicator2 = Big(100000).div(X).round(0,Big.roundDown)
+    if (multiplicator1.gt(0)) {
+        let mult = Big(Math.random()).times(multiplicator1.plus(1).minus(multiplicator2)).plus(multiplicator2).round(0,Big.roundDown)
+        if (mult.eq(0)) {mult = Big(1)}  
+        S = S.times(mult)
+        X = X.times(mult)
+    }
+    let ANS = X.toNumber()
+    let part: string = ''
+    let dateTime = new Date()
 
+    part +='Рахиль Абрамовна взяла кредит в банке на 4 года на сумму '
+    part += S.toString() 
+    part += ' рублей. Условия возврата кредита таковы: в конце каждого года банк увеличивает текущую сумму долга на '
+    part += R1000_initial.div(10).minus(100).toString()
+    part += '%.\nРахиль Абрамовна хочет выплатить весь долг двумя равными платежами ― в конце второго и четвертого годов. При этом платежи в каждом случае выплачиваются после начисления процентов. Сколько рублей составит каждый из этих платежей?'
 
+return [part, ANS]
+}
+functions[15]['RV2'].URL = 'YOUTUBE RV2 URL'
+functions[15]['RV2'].is_text = 1
 
 
 let UserBase: User[] = []
@@ -1096,6 +1133,7 @@ client.on('interactionCreate', async (interaction) => {
 | RV1Q3 | Равные выплаты. Обычная. Теперь надо найти выплату X, зная S                |
 | RV1Q4 | Равные выплаты. Обычная. То же, что RV1Q3, только теперь в ответ сумму X    |
 | RV1Q5 | Равные выплаты. Обычная. То же, что RV1Q1, только знаем NX-S, а не просто X |
+| RV2   | Равные выплаты. Прикольчик с пропуском платежей (они через раз). Найти X    |
 +-------+-----------------------------------------------------------------------------+                        
 ` +'```' )
                         break
