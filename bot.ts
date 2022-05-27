@@ -728,6 +728,9 @@ functions[15]['DDL5'] = function () {
 functions[15]['DDL5'].URL = 'YOUTUBE DDL5 URL'
 functions[15]['DDL5'].is_text = 1
 functions[15]['RV1Q1'] = function () {
+    let R1000mas = [
+        Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1125), Big(1130), Big(1140), Big(1150), Big(1200), Big(1250),
+    ]
     let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
 let DigitsMas = [Big(0),Big(1),Big(2),Big(3),Big(4),Big(5),Big(6),Big(7),Big(8),Big(9),]
 let Nmas = [Big(2),Big(3), Big(4),] // Большее число строк заебешься считать
