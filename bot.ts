@@ -1069,6 +1069,67 @@ functions[15]['RV3REF'] = function () {
 functions[15]['RV3REF'].URL = 'YOUTUBE RV3REF URL'
 functions[15]['RV3REF'].is_text = 1
 
+functions[15]['RV3MIN'] = function () {
+    let R1000mas = [Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1130), Big(1140), Big(1150), Big(1200),]
+    let Smas = [Big(1), Big(1.5), Big(2), Big(2.5), Big(3), Big(3.5), Big(4), Big(4.5), Big(5), Big(5.5)]
+    let S = Smas[Math.floor(Math.random() * (Smas.length))]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let questionType = 1 // В этом случае формулируем вопрос про месяцы 
+    if(R1000.gt(1060)) {questionType = 0} //В этом случае формулируем вопрос про года
+    let X = Big(0)
+    let Nmas = [Big(3),Big(4),Big(5),]
+    while ((S.times(1e6).times(R1000.div(1000).minus(1))).gt(X)) //Условие для того, чтобы не оказалось что сумма долга растет бесконечно
+    {
+    let N_approximate = Nmas[Math.floor(Math.random() * (Nmas.length))]
+    X = S.times(1e6).div(N_approximate).div(1000).round().times(1000)
+    //console.log('ya_zavis'+' S='+S.toString() + ' N_approximate-' +N_approximate.toString()+' R='+R1000.div(1000).minus(1).toString()+' X='+X.toString() + ' Stimes=' + (S.times(1e6).times(R1000.div(1000).minus(1))).toString())
+    }
+    let N = 0
+    let DEBT = S.times(1e6)
+    while (DEBT>0)
+    {
+        DEBT=DEBT.times(R1000.div(1000)).minus(X)
+        N += 1
+    }
+  
+    let ANS = N
+  
+    let part: string = ''
+    let dateTime = new Date()
+    let startYear = (dateTime.getFullYear())-1
+  
+    if (questionType==1)
+    {
+        part += '1 января '
+        part += startYear.toString()
+        part += ' года Ицхак Иеремиевич взял в банке '
+        part += S.toString()
+        part += ' млн рублей в кредит.\nСхема выплаты кредита следующая:\n1 числа каждого следующего месяца банк начисляет '
+        part += R1000.div(10).minus(100).toString()
+        part += '% на оставшуюся сумму долга (то есть увеличивает долг на '
+        part += R1000.div(10).minus(100).toString()
+        part += '%), затем Ицхак Иеремиевич переводит в банк платёж.\n'
+        part += 'На какое минимальное количество месяцев Ицхак Иеремиевич может взять кредит, чтобы ежемесячные выплаты были не более '
+        part += X.toString()
+        part += ' рублей?'
+    }
+  
+    if (questionType==0)
+    {
+        part += 'Сара хочет взять в кредит '
+        part += S.toString()
+        part += ' млн рублей под '
+        part += R1000.div(10).minus(100).toString()
+        part += '% годовых. Погашение кредита происходит раз в год равными суммами (кроме, может быть, последней) после начисления процентов.\nНа какое минимальное количество лет Сара может взять кредит, чтобы ежегодные выплаты были не более '
+        part += X.toString()
+        part += ' рублей?'
+    }
+
+return [part, ANS]
+}
+functions[15]['RV3MIN'].URL = 'YOUTUBE RV3MIN URL'
+functions[15]['RV3MIN'].is_text = 1
+
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
@@ -1195,6 +1256,7 @@ client.on('interactionCreate', async (interaction) => {
 | RV1Q5  | Равные выплаты. Обычная. То же, что RV1Q1, только знаем NX-S, а не просто X |
 | RV2    | Равные выплаты. Прикольчик с пропуском платежей (они через раз). Найти X    |
 | RV3REF | Равные выплаты. Найти экономию от рефинансирования кредита (две выплаты)    |
+| RV3MIN | Равные выплаты. Найти минималку лет. Прикольчик в том, чтобы тупо считать   |
 +-------+------------------------------------------------------------------------------+                        
 ` +'```' )
                         break
