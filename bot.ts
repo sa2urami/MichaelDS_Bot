@@ -1130,6 +1130,71 @@ return [part, ANS]
 functions[15]['RV3MIN'].URL = 'YOUTUBE RV3MIN URL'
 functions[15]['RV3MIN'].is_text = 1
 
+
+
+functions[15]['VPRP1'] = function () {
+    let R1000mas = [Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1130), Big(1140), Big(1150), Big(1200),]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let Nmas = [Big(3),]
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))]
+    let DigitsMas = [Big(1),Big(2),Big(3),Big(4),Big(5)]
+    let prp = [] //Массив, в котором будет храниться пропорция выплат
+    prp[0]=Big(1) //По тексту задачи все выплаты даются в долях от первой, поэтому у нее вес 1
+    for (var i = 1; i < N.toNumber(); i++) { //Формируем массив первых цифр после запятой в долях столбца долг (кроме цифры "0")
+      let gonext=true
+      while (gonext){
+          let prp_candidate = DigitsMas[Math.floor(Math.random() * (DigitsMas.length-1))+1]
+          if(!prp.includes(prp_candidate)){
+              prp[prp.length]=prp_candidate;
+              gonext=false
+          }
+      }
+      }
+      prp.sort()
+  
+      let Denom = R1000.pow(N.toNumber())
+      let Numer = Big(0)
+      for (let i = 0; i < N; i++) {
+          Numer = Numer.plus(R1000.pow(N.toNumber()-i-1).times(Big(1000).pow(i+1)).times(prp[i]))
+      }
+      let gcdNumDen = gcdBIG(Numer, Denom)
+  
+      let S = Numer.div(gcdNumDen)
+      let X = Denom.div(gcdNumDen)
+      let multiplicator1 = Big(5000000).div(S).round(0,Big.roundDown)
+      let multiplicator2 = Big(1000000).div(S).round(0,Big.roundDown)
+      if (multiplicator1.gt(0)) {
+          let mult = Big(Math.random()).times(multiplicator1.plus(1).minus(multiplicator2)).plus(multiplicator2).round(0,Big.roundDown)
+          if (mult.eq(0)) {mult = Big(1)}  
+          S = S.times(mult)
+          X = X.times(mult)
+      }
+      let ANS = S.toNumber()
+  
+    
+    let part: string = ''
+    let dateTime = new Date()
+    let startYear = (dateTime.getFullYear())-3
+  
+    part += '1 марта '
+    part += startYear.toString()
+    part += ' года Йосечка взял в банке кредит под '
+    part += R1000.div(10).minus(100).toString()
+    part += '% годовых. Схема выплаты кредита следующая: 1 марта каждого следующего года банк начисляет проценты на оставшуюся сумму долга (то есть увеличивает долг на '
+    part += R1000.div(10).minus(100).toString()
+    part += '%), затем Йосечка переводит в банк платеж. Весь долг Йосечка выплатил за 3 платежа, причем второй платеж оказался в '
+    part += prp[1].toString()
+    part += ' раза больше первого, а третий – в '
+    part += prp[2].toString()
+    part += ' раза больше первого. Сколько рублей взял в кредит Йосечка, если за три года он выплатил банку '
+    part += prp[2].plus(prp[1]).plus(prp[0]).times(X).toString()
+    part += ' рублей?'
+return [part, ANS]
+}
+functions[15]['VPRP1'].URL = 'YOUTUBE VPRP1 URL'
+functions[15]['VPRP1'].is_text = 1
+
+
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
@@ -1257,7 +1322,8 @@ client.on('interactionCreate', async (interaction) => {
 | RV2    | Равные выплаты. Прикольчик с пропуском платежей (они через раз). Найти X    |
 | RV3REF | Равные выплаты. Найти экономию от рефинансирования кредита (две выплаты)    |
 | RV3MIN | Равные выплаты. Найти минималку лет. Прикольчик в том, чтобы тупо считать   |
-+-------+------------------------------------------------------------------------------+                        
+| VPRP1  | Выплаты в пропорции. Найти S зная сумму выплат                              |
++--------+-----------------------------------------------------------------------------+                        
 ` +'```' )
                         break
                     default:
