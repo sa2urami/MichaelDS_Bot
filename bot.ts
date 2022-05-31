@@ -1186,7 +1186,9 @@ functions[15]['VPRP1'] = function () {
     part += prp[1].toString()
     part += ' раза больше первого, а третий – в '
     part += prp[2].toString()
-    part += ' раз(-а) больше первого. Сколько рублей взял в кредит Йосечка, если за три года он выплатил банку '
+    if(prp[2].eq(5)) {part += ' раз '}
+    else {part += ' раза '}
+    part += 'больше первого. Сколько рублей взял в кредит Йосечка, если за три года он выплатил банку '
     part += prp[2].plus(prp[1]).plus(prp[0]).times(X).toString()
     part += ' рублей?'
 return [part, ANS]
