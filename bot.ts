@@ -1242,6 +1242,53 @@ return [part, ANS]
 functions[15]['VPRP2'].URL = 'YOUTUBE VPRP2 URL'
 functions[15]['VPRP2'].is_text = 1
 
+functions[15]['VPRP3'] = function () {
+    let R1000mas = [Big(1010), Big(1020), Big(1030), Big(1040), Big(1050), Big(1060), Big(1070), Big(1080), Big(1090), Big(1100), Big(1110), Big(1120), Big(1130), Big(1140), Big(1150), Big(1200),]
+    let R1000 = R1000mas[Math.floor(Math.random() * (R1000mas.length))]
+    let Nmas = [Big(3),]
+    let N = Nmas[Math.floor(Math.random() * (Nmas.length))]
+    let variant_uslovia = Math.floor(Math.random()*2) // Если 0 - то в два раза больше, если 1 - то в три раза больше
+    let prp = [] //Массив, в котором будет храниться пропорция выплат
+    if (variant_uslovia==0) {prp = [Big(4),Big(2),Big(1),]}
+    if (variant_uslovia==1) {prp = [Big(9),Big(3),Big(1),]}
+    
+  
+      let Denom = R1000.pow(N.toNumber())
+      let Numer = Big(0)
+      for (let i = 0; i < N; i++) {
+          Numer = Numer.plus(R1000.pow(N.toNumber()-i-1).times(Big(1000).pow(i+1)).times(prp[i]))
+      }
+      let gcdNumDen = gcdBIG(Numer, Denom)
+  
+      let S = Numer.div(gcdNumDen)
+      let X = Denom.div(gcdNumDen)
+      let multiplicator1 = Big(5000000).div(S).round(0,Big.roundDown)
+      let multiplicator2 = Big(1000000).div(S).round(0,Big.roundDown)
+      if (multiplicator1.gt(0)) {
+          let mult = Big(Math.random()).times(multiplicator1.plus(1).minus(multiplicator2)).plus(multiplicator2).round(0,Big.roundDown)
+          if (mult.eq(0)) {mult = Big(1)}  
+          S = S.times(mult)
+          X = X.times(mult)
+      }
+      let ANS = X.toNumber()
+  
+    
+    let part: string = ''
+    
+    part += 'Бенцион (он же Бенчик) взял кредит в банке на сумму '
+    part += S.toString()
+    part += ' рублей. Схема выплата кредита такова: в конце каждого года банк увеличивает на '
+    part += R1000.div(10).minus(100).toString()
+    part += ' процентов оставшуюся сумму долга, а затем Бенчик переводит в банк свой очередной платеж. Известно, что Бенчик погасил кредит за три года, причем каждый его следующий платеж был ровно '
+    if(variant_uslovia==0) {part += 'вдвое'}
+    if(variant_uslovia==1) {part += 'втрое'}
+    part += ' меньше предыдущего. Какую сумму Бенчик заплатил в третий раз? Ответ дайте в рублях.'
+
+return [part, ANS]
+}
+functions[15]['VPRP3'].URL = 'YOUTUBE VPRP3 URL'
+functions[15]['VPRP3'].is_text = 1
+
 let UserBase: User[] = []
 exitHook(() => {
     let buf = JSON.stringify(UserBase)
@@ -1371,6 +1418,7 @@ client.on('interactionCreate', async (interaction) => {
 | RV3MIN | Равные выплаты. Найти минималку лет. Прикольчик в том, чтобы тупо считать   |
 | VPRP1  | Выплаты в пропорции. Найти S зная сумму выплат                              |
 | VPRP2  | Выплаты в пропорции. Пропорция - растущая геометрическая прогрессия         |
+| VPRP3  | Выплаты в пропорции. Пропорция - падающая геометрическая прогрессия         |
 +--------+-----------------------------------------------------------------------------+                        
 ` +'```' )
                         break
